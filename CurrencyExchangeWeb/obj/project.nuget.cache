@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "A1jt9wJgO+g=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ASUS\\Desktop\\CurrencyExchangeProject\\CurrencyExchangeWeb\\CurrencyExchangeWeb.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ASUS\\.nuget\\packages\\system.servicemodel.http\\10.0.652802\\system.servicemodel.http.10.0.652802.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\system.servicemodel.primitives\\10.0.652802\\system.servicemodel.primitives.10.0.652802.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,133 @@
+﻿@model List<CurrencyExchangeWeb.Services.ExchangeRate>
+
+@{
+    ViewData["Title"] = "Exchange App";
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Exchange Office</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        .rate-card { transition: transform 0.2s; }
+        .rate-card:hover { transform: translateY(-5px); }
+        .currency-code { font-size: 1.2rem; font-weight: bold; }
+        .currency-rate { font-size: 1rem; color: #0d6efd; }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="text-center mb-4">
+            <h1 class="display-4">🪙 Exchange Office</h1>
+            <p class="lead">NBP API - Real time currencies</p>
+            <hr />
+        </div>
+
+        <div class="row">
+            <!-- Exchanger -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">💰 Currency Exchange</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Amount</label>
+                            <input type="number" id="amount" class="form-control" value="100" step="0.01" />
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="form-label">From</label>
+                                <select id="fromCurrency" class="form-select">
+                                    @foreach (var rate in Model)
+                                    {
+                                        <option value="@rate.CurrencyCode">@rate.CurrencyCode - @rate.CurrencyName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">To</label>
+                                <select id="toCurrency" class="form-select">
+                                    <option value="PLN">PLN - Polish Zloty</option>
+                                    @foreach (var rate in Model)
+                                    {
+                                        <option value="@rate.CurrencyCode">@rate.CurrencyCode - @rate.CurrencyName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <button id="convertBtn" class="btn btn-primary w-100 mt-3">Exchange</button>
+                        <div id="resultDiv" class="alert alert-success mt-3 d-none">
+                            <span id="resultText"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exchange Rate Tables -->
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">📊 Current Exchange Rates (PLN)</h5>
+                        <small>Last Update: @DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")</small>
+                    </div>
+                    <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                        <div class="row">
+                            @foreach (var rate in Model)
+                            {
+                                <div class="col-md-4 col-sm-6 mb-2">
+                                    <div class="rate-card card p-2">
+                                        <div class="currency-code">@rate.CurrencyCode</div>
+                                        <div class="currency-name small text-muted">@rate.CurrencyName</div>
+                                        <div class="currency-rate fw-bold">@rate.Rate.ToString("0.0000") PLN</div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center mt-4 text-muted">
+            <small>The data is obtained from the National Bank of Poland (NBP) API.</small>
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#convertBtn').click(function() {
+                var fromCurrency = $('#fromCurrency').val();
+                var toCurrency = $('#toCurrency').val();
+                var amount = $('#amount').val();
+
+                $.ajax({
+                    url: '@Url.Action("Convert", "Home")',
+                    type: 'POST',
+                    data: {
+                        fromCurrency: fromCurrency,
+                        toCurrency: toCurrency,
+                        amount: amount
+                    },
+                    success: function(response) {
+                        $('#resultDiv').removeClass('d-none');
+                        $('#resultText').html(`
+                            <strong>${response.amount} ${response.fromCurrency}</strong> = 
+                            <strong>${response.convertedAmount} ${response.toCurrency}</strong>
+                            <br/><small>Rate: ${response.exchangeRateUsed} | ${new Date(response.conversionDate).toLocaleString()}</small>
+                        `);
+                    },
+                    error: function() {
+                        $('#resultDiv').removeClass('d-none alert-success').addClass('alert-danger');
+                        $('#resultText').html('Error!');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
