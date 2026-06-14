@@ -2,6 +2,10 @@
 
 A complete currency exchange system with WCF backend and ASP.NET Core MVC frontend, integrated with NBP (National Bank of Poland) real-time API.
 
+Course name: Network Application Development
+Rustam Akbarov
+Student ID number: 73652
+
 ## 🚀 Features
 
 - **Real-time Exchange Rates** - Fetches live rates for 32 currencies from NBP API
